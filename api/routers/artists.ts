@@ -27,3 +27,5 @@ artistsRouter.post('/', imagesUpload.single('image'), async(req, res, next) => {
        return next(e);
    }
 });
+
+export default artistsRouter;

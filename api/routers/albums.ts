@@ -56,3 +56,5 @@ albumsRouter.post('/', imagesUpload.single('image'), async(req,res, next) => {
        next(e);
    }
 });
+
+export default albumsRouter;

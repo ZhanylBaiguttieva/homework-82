@@ -34,3 +34,5 @@ tracksRouter.post('/', async(req, res, next) => {
        next(e);
    }
 });
+
+export default tracksRouter;
