@@ -1,7 +1,7 @@
 export interface Artist {
     name: string,
-    image: string | null,
     information: string,
+    image: string | null,
 }
 
 export interface Album {
