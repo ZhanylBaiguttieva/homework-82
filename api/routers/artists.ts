@@ -1,5 +1,6 @@
 import {Router} from "express";
 import Artist from "../models/Artist";
+import {imagesUpload} from "../multer";
 
 const artistsRouter = Router();
 
@@ -12,7 +13,7 @@ artistsRouter.get('/', async (_req, res, next) => {
     }
 });
 
-artistsRouter.post('/', async(req, res, next) => {
+artistsRouter.post('/', imagesUpload.single('image'), async(req, res, next) => {
    try {
        const artistData = {
            name: req.body.name,
