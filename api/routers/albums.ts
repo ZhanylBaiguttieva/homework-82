@@ -23,16 +23,12 @@ albumsRouter.get('/', async(req, res, next) =>{
 
 albumsRouter.get('/:id', async(req,res, next) => {
    try {
-       let _id =  new Types.ObjectId(req.params.id);
-       // try {
-       //     _id = new Types.ObjectId(req.params.id);
-       // } catch {
-       //     return res.status(404).send({error: 'Wrong ObjectId!'});
-       // }
+       let _id = new Types.ObjectId(req.params.id);
+
        const album = await Album.findById(_id).populate('artist', 'name information');
 
        if (!album) {
-           return res.status(404).send({error: 'Not found!'});
+           return res.status(404).send({error: 'Album Not found!'});
        }
        res.send(album);
 
