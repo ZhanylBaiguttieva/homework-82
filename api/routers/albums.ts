@@ -9,10 +9,10 @@ albumsRouter.get('/', async(req, res, next) =>{
     try {
         const artist = req.query.artist;
         if(artist) {
-            const albums = await Album.find({artist: req.query.artist});
+            const albums = await Album.find({artist: req.query.artist}).populate('artist','name information');
             return res.send(albums);
         } else {
-            const albums = await Album.find();
+            const albums = await Album.find().populate('artist','name information');
             return res.send(albums);
         }
 
@@ -23,12 +23,12 @@ albumsRouter.get('/', async(req, res, next) =>{
 
 albumsRouter.get('/:id', async(req,res, next) => {
    try {
-       let _id = Types.ObjectId;
-       try {
-           _id = new Types.ObjectId(req.params.id);
-       } catch {
-           return res.status(404).send({error: 'Wrong ObjectId!'});
-       }
+       let _id =  new Types.ObjectId(req.params.id);
+       // try {
+       //     _id = new Types.ObjectId(req.params.id);
+       // } catch {
+       //     return res.status(404).send({error: 'Wrong ObjectId!'});
+       // }
        const album = await Album.findById(_id);
 
        if (!album) {
