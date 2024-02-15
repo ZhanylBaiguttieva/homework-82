@@ -25,6 +25,12 @@ export interface UserFields {
     token: string;
 }
 
+export interface TrackHistory {
+    user: string,
+    track: string,
+    datetime: string,
+}
+
 interface UserMethods {
     checkPassword(password: string): Promise<boolean>;
     generateToken(): void;
