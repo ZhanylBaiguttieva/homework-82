@@ -26,7 +26,7 @@ const run = async () => {
     const [artist1, artist2 ] = await Artist.create(
         {
             name: 'Michael Jackson',
-            image: 'fixtures/jackson.jpg',
+            image: 'fixtures/jackson_photo.jpg',
         },
         {
             name: 'Dua Lipa',
