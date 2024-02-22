@@ -7,7 +7,10 @@ tracksRouter.get('/', async(req,res, next) => {
     try {
         const album = req.query.album;
         if(album) {
-            const tracks = await Track.find({album: req.query.album}).populate('album','name date');
+            const tracks = await Track.find(
+                {album: req.query.album})
+                .sort({number:"asc"})
+                .populate('album','name date');
             return res.send(tracks);
         } else {
             const tracks = await Track.find().populate('album','name date');
