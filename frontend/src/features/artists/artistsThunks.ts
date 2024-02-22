@@ -9,3 +9,14 @@ export const fetchArtists = createAsyncThunk(
     return response.data;
   }
 );
+
+export const fetchOneArtist = createAsyncThunk<Artist| null, string>(
+  'albums/fetchOne',
+  async(artist_id) => {
+    const artistResponse = await axiosApi.get<Artist | null>('/artists/' +  artist_id);
+    if(!artistResponse) {
+      return null;
+    }
+    return artistResponse.data;
+  }
+);
