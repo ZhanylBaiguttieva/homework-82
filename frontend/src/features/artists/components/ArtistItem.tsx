@@ -29,7 +29,7 @@ const ArtistItem: React.FC<Props> = ({id,name, image}) => {
         <CardHeader title={name}/>
         <ImageCardMedia image={cardImage} />
         <CardActions>
-          <IconButton component={RouterLink} to={'/artists/' + id}>
+          <IconButton component={RouterLink} to={'/albums/' + id}>
             <ArrowForwardIcon/> more...
           </IconButton>
         </CardActions>
