@@ -9,7 +9,7 @@ export interface Artist {
 export interface Album {
     name: string,
     artist: string,
-    date: string,
+    date: number,
     image: string | null,
 }
 
@@ -17,6 +17,7 @@ export interface Track {
     name: string,
     album: string,
     length: string,
+    number: number,
 }
 
 export interface UserFields {
