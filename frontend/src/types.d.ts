@@ -6,13 +6,15 @@ export interface Artist {
 
 export interface Album {
   artist: Artist;
+  _id: string;
   name: string;
   date: number;
   image: string | null;
 }
 
 export interface Track {
-  album: Album,
+  album: Album;
+  _id: string;
   name: string;
   number: number;
   length: string;
