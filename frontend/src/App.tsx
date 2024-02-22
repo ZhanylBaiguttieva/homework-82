@@ -5,6 +5,7 @@ import { Container, CssBaseline } from '@mui/material';
 import { Route, Routes } from 'react-router-dom';
 import Artists from './features/artists/components/Artists.tsx';
 import Albums from './features/albums/components/Albums.tsx';
+import Tracks from './features/tracks/components/Tracks.tsx';
 
 function App() {
 
@@ -18,8 +19,8 @@ function App() {
         <Container maxWidth="xl">
           <Routes>
             <Route path="/" element={<Artists />} />
-            <Route path="/albums/:id" element={<Albums />} />
-            {/*<Route path="/albums" element={<Albums/>}/>*/}
+            <Route path="/albums/:id" element={<Albums />}/>
+            <Route path="/tracks/:id" element={<Tracks />}/>
             <Route path="*" element={<h1>Not found</h1>} />
           </Routes>
         </Container>
