@@ -22,6 +22,9 @@ const ToolBar = () => {
           <Typography variant="h6" component="div">
             <Link to="/">Music App</Link>
           </Typography>
+          <Typography component="div">
+            <Link to="/track_history">Track History</Link>
+          </Typography>
           { user ? (
             <UserMenu user={user}/>
           ) : (

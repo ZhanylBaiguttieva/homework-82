@@ -1,18 +1,23 @@
 import React from 'react';
 import { Box, Card, CardContent, Grid, IconButton, Typography } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
-import SkipPreviousIcon from '@mui/icons-material/SkipPrevious';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import SkipNextIcon from '@mui/icons-material/SkipNext';
+import { addTrackToHistory } from '../../trackHistories/TracksListenedThunk.ts';
+import { useAppDispatch } from '../../../app/hooks.ts';
+
 
 interface Props {
+  _id: string;
   name: string;
   number: number;
   length: string;
 }
 
-const TrackItem:React.FC<Props> = ({ name, number, length}) => {
-  const theme = useTheme();
+const TrackItem:React.FC<Props> = ({ _id,name, number, length,}) => {
+
+  const dispatch = useAppDispatch();
+  const addTrack = async() => {
+    await dispatch(addTrackToHistory(_id));
+  };
 
   return (
     <Grid item sm md={6} lg={4}>
@@ -30,14 +35,8 @@ const TrackItem:React.FC<Props> = ({ name, number, length}) => {
             </Typography>
           </CardContent>
           <Box sx={{ display: 'flex', alignItems: 'center', pl: 1, pb: 1 }}>
-            <IconButton aria-label="previous">
-              {theme.direction === 'rtl' ? <SkipNextIcon /> : <SkipPreviousIcon />}
-            </IconButton>
-            <IconButton aria-label="play/pause">
+            <IconButton onClick={addTrack} aria-label="play/pause">
               <PlayArrowIcon sx={{ height: 38, width: 38 }} />
-            </IconButton>
-            <IconButton aria-label="next">
-              {theme.direction === 'rtl' ? <SkipPreviousIcon /> : <SkipNextIcon />}
             </IconButton>
           </Box>
         </Box>

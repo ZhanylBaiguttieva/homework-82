@@ -36,6 +36,7 @@ export const usersSlice = createSlice({
       state.registerLoading = false;
       state.registerError = error || null;
     });
+
     builder.addCase(login.pending,(state) => {
       state.loginLoading = true;
       state.loginError = null;
@@ -50,7 +51,6 @@ export const usersSlice = createSlice({
     });
   }
 });
-
 export const usersReducer = usersSlice.reducer;
 
 export const selectUser = (state: RootState) => state.users.user;

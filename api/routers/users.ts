@@ -1,7 +1,6 @@
 import {Router} from "express";
 import User from "../models/User";
 import mongoose from "mongoose";
-import exp from "node:constants";
 
 const usersRouter = Router();
 
@@ -14,7 +13,7 @@ usersRouter.post('/', async(req,res, next) => {
        const user = new User(userData);
        user.generateToken();
        await user.save();
-       res.send(user);
+       res.send({message: 'ok!', user});
    } catch (e) {
        if (e instanceof mongoose.Error.ValidationError) {
            return res.status(422).send(e);
@@ -37,7 +36,7 @@ usersRouter.post('/sessions', async (req,res, next) => {
         user.generateToken();
         await user.save();
 
-        return res.send(user);
+        return res.send({ message: 'Username and password are correct!', user });
     } catch (e) {
         next(e);
     }

@@ -56,4 +56,18 @@ export interface RegisterResponse {
   user: User;
 }
 
+export interface TrackListened {
+  _id: string;
+  track: {
+    _id: string;
+    name: string;
+  };
+  artist: {
+    _id: string;
+    name: string;
+  };
+  user: string;
+  datetime: string;
+}
+
 
