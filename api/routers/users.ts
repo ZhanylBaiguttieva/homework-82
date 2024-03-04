@@ -40,6 +40,35 @@ usersRouter.post('/sessions', async (req,res, next) => {
     } catch (e) {
         next(e);
     }
-})
+});
+
+usersRouter.delete('/sessions', async (req, res, next) => {
+    try {
+        const headerValue = req.get('Authorization');
+        const successMessage = { message: 'Success!' };
+
+        if (!headerValue) {
+            return res.send(successMessage);
+        }
+
+        const [_bearer, token] = headerValue.split(' ');
+        if (!token) {
+            return res.send(successMessage);
+        }
+
+        const user = await User.findOne({ token });
+
+        if (!user) {
+            return res.send(successMessage);
+        }
+
+        user.generateToken();
+        await user.save();
+
+        return res.send(successMessage);
+    } catch (e) {
+        next(e);
+    }
+});
 
 export default usersRouter;

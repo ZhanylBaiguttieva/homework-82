@@ -7,7 +7,6 @@ import artistsRouter from "./routers/artists";
 import albumsRouter from "./routers/albums";
 import tracksRouter from "./routers/tracks";
 import usersRouter from "./routers/users";
-import trackHistory from "./models/TrackHistory";
 import trackHistoriesRouter from "./routers/trackhistories";
 
 const app = express();

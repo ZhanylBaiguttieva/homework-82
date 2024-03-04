@@ -4,11 +4,19 @@ import { useEffect } from 'react';
 import { fetchTracksListened } from '../TracksListenedThunk.ts';
 import { CircularProgress, Grid } from '@mui/material';
 import TrackHistory from './TrackHistory.tsx';
+import { selectUser } from '../../users/usersSlice.ts';
+import { useNavigate } from 'react-router-dom';
 
 
 const TracksHistories = () => {
   const dispatch = useAppDispatch();
   const tracksListened = useAppSelector(selectTracksListened);
+  const user = useAppSelector(selectUser);
+  const navigate = useNavigate();
+
+  if(!user) {
+    navigate('/login');
+  }
 
   const isLoading = useAppSelector(selectFetching );
 

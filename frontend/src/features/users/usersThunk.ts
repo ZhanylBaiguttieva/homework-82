@@ -2,6 +2,8 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { GlobalError, LoginMutation, RegisterMutation, RegisterResponse, ValidationError } from '../../types';
 import axiosApi from '../../axiosApi.ts';
 import { isAxiosError } from 'axios';
+import { RootState } from '../../app/store.ts';
+import { unSetUser } from './usersSlice.ts';
 
 export  const register = createAsyncThunk<RegisterResponse,RegisterMutation,{rejectValue: ValidationError}>(
   'users/register',
@@ -31,4 +33,13 @@ export  const login = createAsyncThunk<RegisterResponse,LoginMutation,{rejectVal
       throw e;
     }
   }
+);
+
+export const logout = createAsyncThunk<void, undefined, {state: RootState}>(
+  'users/logout',
+  async(_, {getState, dispatch}) => {
+    const token = getState().users.user?.token;
+    await axiosApi.delete('/users/sessions', {headers: {'Authorization': 'Bearer ' + token}});
+    dispatch(unSetUser());
+  },
 );
