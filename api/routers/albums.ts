@@ -2,7 +2,10 @@ import {Router} from "express";
 import Album from "../models/Album";
 import {Types} from "mongoose";
 import {imagesUpload} from "../multer";
-import auth from "../middleware/auth";
+import auth, {RequestWithUser} from "../middleware/auth";
+import permit from "../middleware/permit";
+import Artist from "../models/Artist";
+import artistsRouter from "./artists";
 
 const albumsRouter = Router();
 
@@ -46,7 +49,7 @@ albumsRouter.post(
     '/',
     auth,
     imagesUpload.single('image'),
-    async(req,res, next) => {
+    async(req: RequestWithUser,res, next) => {
    try {
        const albumData = {
            name: req.body.name,
@@ -61,6 +64,75 @@ albumsRouter.post(
    } catch(e) {
        next(e);
    }
+});
+
+albumsRouter.delete(
+    '/:id',
+    auth,
+    permit('admin'),
+    async(req: RequestWithUser, res,next) => {
+        try {
+            let _id: Types.ObjectId;
+            try {
+                _id = new Types.ObjectId(req.params.id);
+            } catch {
+                return res.status(404).send({error: 'Wrong ObjectId!'});
+            }
+            const album = await Album.findById(_id);
+            if(!album) {
+                return res.status(404).send({error: 'Album Not found!'});
+            }
+            const deletedOne = await Album.findByIdAndDelete(_id);
+
+            res.send(deletedOne);
+
+        } catch(e) {
+            next(e);
+        }
+    });
+
+albumsRouter.patch(
+    '/:id/togglePublished',
+    auth,
+    permit('admin'),
+    async (req,res,next) => {
+        try{
+
+        } catch (e) {
+            next(e);
+        }
+});
+
+albumsRouter.patch(
+    '/:id/togglePublished',
+    auth,
+    permit('admin'),
+    async (req,res,next) => {
+        try{
+            let _id: Types.ObjectId;
+            try {
+                _id = new Types.ObjectId(req.params.id);
+            } catch {
+                return res.status(404).send({error: 'Wrong ObjectId!'});
+            }
+            const album = await Album.findById(_id);
+            if (!album) {
+                return res.status(404).send({error: 'Album Not found!'});
+            }
+
+            const newAlbum  = new Album({
+                _id:_id,
+                name: req.body.name,
+                artist: req.body.artist,
+                date: parseFloat(req.body.date),
+                image: req.file ? req.file.filename : null,
+                isPublished: !req.body.isPublished,
+            });
+
+            res.send(await Album.findByIdAndUpdate(_id, newAlbum));
+        } catch (e) {
+            next(e);
+        }
 });
 
 export default albumsRouter;

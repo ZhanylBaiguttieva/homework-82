@@ -1,6 +1,8 @@
 import {Router} from "express";
 import Track from "../models/Track";
-import auth from "../middleware/auth";
+import auth, {RequestWithUser} from "../middleware/auth";
+import permit from "../middleware/permit";
+import {Types} from "mongoose";
 
 const tracksRouter = Router();
 
@@ -26,7 +28,7 @@ tracksRouter.get('/', async(req,res, next) => {
 tracksRouter.post(
     '/',
     auth,
-    async(req, res, next) => {
+    async(req: RequestWithUser, res, next) => {
    try {
        const trackData = {
            name: req.body.name,
@@ -41,6 +43,62 @@ tracksRouter.post(
    } catch(e) {
        next(e);
    }
+});
+
+tracksRouter.delete('/:id',
+    auth,
+    permit('admin'),
+    async(req: RequestWithUser, res,next) => {
+    try {
+        let _id: Types.ObjectId;
+        try {
+            _id = new Types.ObjectId(req.params.id);
+        } catch {
+            return res.status(404).send({error: 'Wrong ObjectId!'});
+        }
+        const track = await Track.findById(_id);
+        if(!track) {
+            return res.status(404).send({error: 'Track Not found!'});
+        }
+        const deletedOne = await Track.findByIdAndDelete(_id);
+
+        res.send(deletedOne);
+
+    } catch(e) {
+        next(e);
+    }
+});
+
+tracksRouter.patch(
+    '/:id/togglePublished',
+    auth,
+    permit('admin'),
+    async (req,res,next) => {
+        try{
+            let _id: Types.ObjectId;
+            try {
+                _id = new Types.ObjectId(req.params.id);
+            } catch {
+                return res.status(404).send({error: 'Wrong ObjectId!'});
+            }
+            const track = await Track.findById(_id);
+            if (!track) {
+                return res.status(404).send({error: 'Track Not found!'});
+            }
+
+            const newTrack = new Track({
+                _id: _id,
+                album: req.body.album,
+                name: req.body.name,
+                length: req.body.length,
+                number: req.body.number,
+                isPublished: !req.body.isPublished,
+            });
+
+            res.send(await Track.findByIdAndUpdate(_id, newTrack));
+        } catch (e) {
+            next(e);
+        }
 });
 
 export default tracksRouter;

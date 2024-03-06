@@ -3,7 +3,10 @@ import Artist from "../models/Artist";
 import {imagesUpload} from "../multer";
 import mongoose, {mongo, Types} from "mongoose";
 import Album from "../models/Album";
-import auth from "../middleware/auth";
+import auth, {RequestWithUser} from "../middleware/auth";
+import permit from "../middleware/permit";
+import Track from "../models/Track";
+import tracksRouter from "./tracks";
 
 const artistsRouter = Router();
 
@@ -35,7 +38,7 @@ artistsRouter.post(
     '/',
     auth,
     imagesUpload.single('image'),
-    async(req, res, next) => {
+    async(req: RequestWithUser, res, next) => {
    try {
        const artistData = {
            name: req.body.name,
@@ -55,6 +58,62 @@ artistsRouter.post(
        }
        next(e);
    }
+});
+
+artistsRouter.delete(
+    '/:id',
+    auth,
+    permit('admin'),
+    async(req: RequestWithUser, res,next) => {
+        try {
+            let _id: Types.ObjectId;
+            try {
+                _id = new Types.ObjectId(req.params.id);
+            } catch {
+                return res.status(404).send({error: 'Wrong ObjectId!'});
+            }
+            const artist = await Artist.findById(_id);
+            if(!artist) {
+                return res.status(404).send({error: 'Artist Not found!'});
+            }
+            const deletedOne = await Artist.findByIdAndDelete(_id);
+
+            res.send(deletedOne);
+
+        } catch(e) {
+            next(e);
+        }
+});
+
+artistsRouter.patch(
+    '/:id/togglePublished',
+    auth,
+    permit('admin'),
+    async (req,res,next) => {
+        try{
+            let _id: Types.ObjectId;
+            try {
+                _id = new Types.ObjectId(req.params.id);
+            } catch {
+                return res.status(404).send({error: 'Wrong ObjectId!'});
+            }
+            const artist = await Artist.findById(_id);
+            if (!artist) {
+                return res.status(404).send({error: 'Artist Not found!'});
+            }
+
+            const newArtist  = new Artist({
+                _id: _id,
+                name: req.body.name,
+                image: req.file ? req.file.filename : null,
+                information: req.body.information,
+                isPublished: !req.body.isPublished,
+            });
+
+            res.send(await Artist.findByIdAndUpdate(_id, newArtist));
+        } catch (e) {
+            next(e);
+        }
 });
 
 export default artistsRouter;
