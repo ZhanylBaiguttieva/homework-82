@@ -3,6 +3,7 @@ import Artist from "../models/Artist";
 import {imagesUpload} from "../multer";
 import mongoose, {mongo, Types} from "mongoose";
 import Album from "../models/Album";
+import auth from "../middleware/auth";
 
 const artistsRouter = Router();
 
@@ -30,7 +31,11 @@ artistsRouter.get('/:id', async(req,res, next) => {
        next(e);
    }
 });
-artistsRouter.post('/', imagesUpload.single('image'), async(req, res, next) => {
+artistsRouter.post(
+    '/',
+    auth,
+    imagesUpload.single('image'),
+    async(req, res, next) => {
    try {
        const artistData = {
            name: req.body.name,

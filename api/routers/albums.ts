@@ -2,6 +2,7 @@ import {Router} from "express";
 import Album from "../models/Album";
 import {Types} from "mongoose";
 import {imagesUpload} from "../multer";
+import auth from "../middleware/auth";
 
 const albumsRouter = Router();
 
@@ -41,7 +42,11 @@ albumsRouter.get('/:id', async(req,res, next) => {
        next(e);
    }
 });
-albumsRouter.post('/', imagesUpload.single('image'), async(req,res, next) => {
+albumsRouter.post(
+    '/',
+    auth,
+    imagesUpload.single('image'),
+    async(req,res, next) => {
    try {
        const albumData = {
            name: req.body.name,

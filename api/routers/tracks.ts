@@ -1,5 +1,6 @@
 import {Router} from "express";
 import Track from "../models/Track";
+import auth from "../middleware/auth";
 
 const tracksRouter = Router();
 
@@ -22,7 +23,10 @@ tracksRouter.get('/', async(req,res, next) => {
     }
 });
 
-tracksRouter.post('/', async(req, res, next) => {
+tracksRouter.post(
+    '/',
+    auth,
+    async(req, res, next) => {
    try {
        const trackData = {
            name: req.body.name,
