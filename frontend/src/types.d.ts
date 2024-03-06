@@ -4,6 +4,11 @@ export interface Artist {
   image: string | null;
 }
 
+export interface ArtistMutation {
+  name: string;
+  image: string | null;
+}
+
 export interface Album {
   artist: Artist;
   _id: string;

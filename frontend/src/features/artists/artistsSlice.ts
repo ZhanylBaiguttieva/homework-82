@@ -1,13 +1,14 @@
 import { Artist } from '../../types';
 import { createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store.ts';
-import { fetchArtists, fetchOneArtist } from './artistsThunks.ts';
+import { createArtist, fetchArtists, fetchOneArtist } from './artistsThunks.ts';
 
 interface ArtistsState {
   items: Artist[];
   artist: Artist | null;
   fetching: boolean;
   fetchingOneArtist: boolean;
+  creating: boolean;
 }
 
 const initialState: ArtistsState = {
@@ -15,6 +16,7 @@ const initialState: ArtistsState = {
   artist: null,
   fetching: false,
   fetchingOneArtist: false,
+  creating: false,
 };
 
 export const artistsSlice = createSlice({
@@ -42,6 +44,16 @@ export const artistsSlice = createSlice({
     builder.addCase(fetchOneArtist.rejected, (state) => {
       state.fetchingOneArtist = false;
     });
+
+    builder.addCase(createArtist.pending, (state) => {
+      state.creating = true;
+    });
+    builder.addCase(createArtist.fulfilled, (state) => {
+      state.creating = false;
+    });
+    builder.addCase(createArtist.rejected, (state) => {
+      state.creating = false;
+    });
   }
 });
 
@@ -49,5 +61,7 @@ export const artistsSlice = createSlice({
 export const artistsReducer = artistsSlice.reducer;
 export const selectArtists = (state: RootState) => state.artists.items;
 export const selectArtist = (state: RootState) => state.artists.artist;
+
+export const selectCreating = (state: RootState) => state.artists.creating;
 export const selectArtistsFetching = (state: RootState) => state.artists.fetching;
 export const selectOneArtistFetching = (state: RootState) => state.artists.fetchingOneArtist;

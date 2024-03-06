@@ -1,5 +1,4 @@
 
-import './App.css';
 import Toolbar from './UI/ToolBar.tsx';
 import { Container, CssBaseline } from '@mui/material';
 import { Route, Routes } from 'react-router-dom';
@@ -9,6 +8,7 @@ import Tracks from './features/tracks/components/Tracks.tsx';
 import Register from './features/users/Register.tsx';
 import Login from './features/users/Login.tsx';
 import TracksHistories from './features/trackHistories/components/TracksHistories.tsx';
+import NewArtist from './features/artists/components/NewArtist.tsx';
 
 function App() {
 
@@ -22,6 +22,7 @@ function App() {
         <Container maxWidth="xl">
           <Routes>
             <Route path="/" element={<Artists />} />
+            <Route path="/artists/new" element={<NewArtist />} />
             <Route path="/albums/:id" element={<Albums />}/>
             <Route path="/tracks/:id" element={<Tracks />}/>
             <Route path="/register" element={<Register />}/>
