@@ -17,6 +17,13 @@ export interface Album {
   image: string | null;
 }
 
+export interface AlbumMutation {
+  artist: string;
+  name: string;
+  date: string;
+  image: File| null;
+}
+
 export interface Track {
   album: Album;
   _id: string;
