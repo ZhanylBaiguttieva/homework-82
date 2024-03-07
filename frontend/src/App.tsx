@@ -10,6 +10,7 @@ import Login from './features/users/Login.tsx';
 import TracksHistories from './features/trackHistories/components/TracksHistories.tsx';
 import NewArtist from './features/artists/components/NewArtist.tsx';
 import NewAlbum from './features/albums/components/NewAlbum.tsx';
+import NewTrack from './features/tracks/components/NewTrack.tsx';
 
 function App() {
 
@@ -28,6 +29,7 @@ function App() {
             <Route path="/track_history" element={<TracksHistories />}/>
             <Route path="/artists/new" element={<NewArtist />} />
             <Route path="/albums/new" element={<NewAlbum />} />
+            <Route path="/tracks/new" element={<NewTrack />} />
             <Route path="/register" element={<Register />}/>
             <Route path="/login" element={<Login />}/>
             <Route path="*" element={<h1>Not found</h1>} />

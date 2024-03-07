@@ -32,6 +32,13 @@ export interface Track {
   length: string;
 }
 
+export interface TrackMutation {
+  album: string,
+  name: string,
+  number: string,
+  length: string,
+}
+
 export interface User {
   _id: string;
   username: string;

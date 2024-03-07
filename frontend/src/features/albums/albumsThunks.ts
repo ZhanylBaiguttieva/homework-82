@@ -4,12 +4,20 @@ import { Album, AlbumMutation, ArtistMutation } from '../../types';
 import { RootState } from '../../app/store.ts';
 
 export const fetchAlbums = createAsyncThunk<Album[], string>(
-  'albums/fetchAll',
+  'albums/fetchByArtist',
   async (artist_id) => {
     const response = await axiosApi.get<Album[]>('/albums/?artist=' + artist_id);
     return response.data;
   }
 );
+
+export const fetchAllAlbums = createAsyncThunk<Album[]>(
+  'albums/fetchAll',
+  async() => {
+    const response = await axiosApi.get<Album[]>('/albums');
+    return response.data;
+  }
+)
 
 export const fetchOneAlbum = createAsyncThunk<Album | null, string>(
   'albums/fetchOne',
