@@ -6,22 +6,34 @@ import auth, {RequestWithUser} from "../middleware/auth";
 import permit from "../middleware/permit";
 import Artist from "../models/Artist";
 import artistsRouter from "./artists";
+import check from "../middleware/check";
 
 const albumsRouter = Router();
 
-albumsRouter.get('/', async(req, res, next) =>{
+albumsRouter.get(
+    '/',
+    check,
+    async(req: RequestWithUser, res, next) =>{
     try {
+        let albumsArray: any[] = [];
         const artist = req.query.artist;
-        if(artist) {
-            const albums = await Album.find(
+        if(artist && req.user && req.user.role === 'user') {
+            albumsArray = await Album.find(
+                {artist: req.query.artist, isPublished: true})
+                .sort({date:"desc"})
+                .populate('artist','name information');
+        } else if(artist && req.user && req.user.role === 'admin') {
+            albumsArray = await Album.find(
                 {artist: req.query.artist})
                 .sort({date:"desc"})
                 .populate('artist','name information');
-            return res.send(albums);
-        } else {
-            const albums = await Album.find().populate('artist','name information');
-            return res.send(albums);
+        } else if (!artist && req.user && req.user.role === 'user') {
+            albumsArray = await Album.find({isPublished: true}).populate('artist','name information');
+        } else if (!artist && req.user && req.user.role === 'admin') {
+            albumsArray = await Album.find().populate('artist','name information');
         }
+
+        return res.send(albumsArray);
 
     } catch(e) {
         return next(e);

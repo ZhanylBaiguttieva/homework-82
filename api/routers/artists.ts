@@ -7,13 +7,22 @@ import auth, {RequestWithUser} from "../middleware/auth";
 import permit from "../middleware/permit";
 import Track from "../models/Track";
 import tracksRouter from "./tracks";
+import check from "../middleware/check";
 
 const artistsRouter = Router();
 
-artistsRouter.get('/', async (_req, res, next) => {
+artistsRouter.get(
+    '/',
+    check,
+    async (req: RequestWithUser, res, next) => {
     try {
-        const artists = await Artist.find();
-        return res.send(artists);
+        let artistsArray: any[] = [];
+        if(req.user && req.user.role === 'user') {
+            artistsArray = await Artist.find({isPublished: true});
+        } else if (req.user && req.user.role === 'admin'){
+            artistsArray = await Artist.find();
+        }
+        return res.send(artistsArray);
     } catch (e) {
          return next(e);
     }

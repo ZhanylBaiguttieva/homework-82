@@ -3,22 +3,33 @@ import Track from "../models/Track";
 import auth, {RequestWithUser} from "../middleware/auth";
 import permit from "../middleware/permit";
 import {Types} from "mongoose";
+import check from "../middleware/check";
 
 const tracksRouter = Router();
 
-tracksRouter.get('/', async(req,res, next) => {
+tracksRouter.get(
+    '/',
+    check,
+    async(req: RequestWithUser,res, next) => {
     try {
+        let tracksArray: any[] = [];
         const album = req.query.album;
-        if(album) {
-            const tracks = await Track.find(
+        if(album && req.user && req.user.role === 'user') {
+            tracksArray = await Track.find(
+                {album: req.query.album, isPublished: true})
+                .sort({number:"asc"})
+                .populate('album','name date');
+        } else if (album && req.user && req.user.role === 'admin') {
+            tracksArray = await Track.find(
                 {album: req.query.album})
                 .sort({number:"asc"})
                 .populate('album','name date');
-            return res.send(tracks);
-        } else {
-            const tracks = await Track.find().populate('album','name date');
-            return res.send(tracks);
+        } else if (!album && req.user && req.user.role === 'user') {
+           tracksArray = await Track.find({isPublished: true}).populate('album','name date');
+        } else if (!album && req.user && req.user.role === 'admin') {
+            tracksArray = await Track.find().populate('album','name date');
         }
+            return res.send(tracksArray);
 
     } catch(e) {
         return next(e);
