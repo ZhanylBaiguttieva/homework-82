@@ -1,4 +1,4 @@
-import { Card, CardActions, CardHeader, CardMedia, Grid, IconButton, styled } from '@mui/material';
+import { Button, Card, CardActions, CardHeader, CardMedia, Grid, IconButton, styled } from '@mui/material';
 import imageNotAvailable from '../../../assets/images/image_not_available.png';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { apiURL } from '../../../constants.ts';
@@ -7,7 +7,7 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks.ts';
 import { selectUser } from '../../users/usersSlice.ts';
 import { selectDeletingArtist } from '../artistsSlice.ts';
-import { deleteArtist, fetchArtists } from '../artistsThunks.ts';
+import { deleteArtist, fetchArtists, publishArtist } from '../artistsThunks.ts';
 import { LoadingButton } from '@mui/lab';
 
 const ImageCardMedia = styled(CardMedia)({
@@ -21,22 +21,27 @@ interface Props {
   image: string | null;
 }
 
-const ArtistItem: React.FC<Props> = ({id,name, image}) => {
+const ArtistItem: React.FC<Props> = ({id, name, image}) => {
+  const user = useAppSelector(selectUser);
+  const isDeleting = useAppSelector(selectDeletingArtist);
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
   let cardImage = imageNotAvailable;
 
   if (image) {
     cardImage = apiURL + '/' + image;
   }
 
-  const user = useAppSelector(selectUser);
-  const isDeleting = useAppSelector(selectDeletingArtist);
-  const navigate = useNavigate();
-  const dispatch = useAppDispatch();
-
   const removeArtist = async() => {
     await dispatch(deleteArtist(id));
     await dispatch(fetchArtists());
     navigate('/');
+  };
+
+  const makePublishedArtist = async () => {
+    await dispatch(publishArtist(id));
+    await dispatch(fetchArtists());
   };
 
   return (
@@ -51,18 +56,29 @@ const ArtistItem: React.FC<Props> = ({id,name, image}) => {
                 <ArrowForwardIcon/> more...
               </IconButton>
             </Grid>
-            <Grid item>
-              {user?.role === 'admin' && (
-                <LoadingButton
-                  color="primary"
-                  onClick={removeArtist}
-                  loading={isDeleting}
-                  disabled={isDeleting}
-                >
-                  Delete
-                </LoadingButton>
-              )}
-            </Grid>
+            {user?.role === 'admin' && (
+              <Grid container justifyContent="space-between">
+                <Grid item>
+                  <LoadingButton
+                    color="primary"
+                    onClick={removeArtist}
+                    loading={isDeleting}
+                    disabled={isDeleting}
+                  >
+                    Delete
+                  </LoadingButton>
+                </Grid>
+                <Grid item>
+                  <Button
+                    color="primary"
+                    onClick={makePublishedArtist}
+                  >
+                    Publish
+                  </Button>
+                </Grid>
+              </Grid>
+            )}
+
           </Grid>
         </CardActions>
       </Card>

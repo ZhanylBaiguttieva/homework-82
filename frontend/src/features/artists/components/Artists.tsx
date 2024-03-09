@@ -26,7 +26,7 @@ const Artists = () => {
             key={artist._id}
             id={artist._id}
             name={artist.name}
-            image={artist.image}
+            image = {artist.image}
           />
         ))}
       </Grid>

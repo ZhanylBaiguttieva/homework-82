@@ -1,12 +1,12 @@
 import React from 'react';
-import { Box, Card, CardContent, Grid, IconButton, Typography } from '@mui/material';
+import { Box, Button, Card, CardContent, Grid, IconButton, Typography } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { addTrackToHistory } from '../../trackHistories/TracksListenedThunk.ts';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks.ts';
 import { selectUser } from '../../users/usersSlice.ts';
 import { useNavigate } from 'react-router-dom';
 import { selectDeletingTrack } from '../tracksSlice.ts';
-import { deleteTrack } from '../tracksThunks.ts';
+import { deleteTrack, publishTrack } from '../tracksThunks.ts';
 import { LoadingButton } from '@mui/lab';
 
 
@@ -32,6 +32,10 @@ const TrackItem:React.FC<Props> = ({ _id,name, number, length,}) => {
     navigate('/');
   };
 
+  const makePublishedTrack = async () => {
+    await dispatch(publishTrack(_id));
+  };
+
   return (
     <Grid item sm md={6} lg={4}>
       <Card sx={{ display: 'flex' }} >
@@ -52,14 +56,26 @@ const TrackItem:React.FC<Props> = ({ _id,name, number, length,}) => {
               <PlayArrowIcon sx={{ height: 38, width: 38 }} />
             </IconButton>
             {user?.role === 'admin' && (
-              <LoadingButton
-                color="primary"
-                onClick={removeTrack}
-                loading={isDeleting}
-                disabled={isDeleting}
-              >
-                Delete
-              </LoadingButton>
+              <Grid container justifyContent="space-between">
+                <Grid item>
+                  <LoadingButton
+                    color="primary"
+                    onClick={removeTrack}
+                    loading={isDeleting}
+                    disabled={isDeleting}
+                  >
+                    Delete
+                  </LoadingButton>
+                </Grid>
+                <Grid item>
+                  <Button
+                    color="primary"
+                    onClick={makePublishedTrack}
+                  >
+                    Publish
+                  </Button>
+                </Grid>
+              </Grid>
             )}
           </Box>
         </Box>

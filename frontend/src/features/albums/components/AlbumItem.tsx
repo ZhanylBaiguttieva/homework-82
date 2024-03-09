@@ -1,27 +1,28 @@
 import React from 'react';
 import imageNotAvailable from '../../../assets/images/image_not_available.png';
-import { Card, CardActions, CardContent, CardHeader, CardMedia, Grid, IconButton, styled } from '@mui/material';
+import { Button, Card, CardActions, CardContent, CardHeader, CardMedia, Grid, IconButton, styled } from '@mui/material';
 import { apiURL } from '../../../constants.ts';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { Link as RouterLink, useNavigate} from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks.ts';
 import { selectUser } from '../../users/usersSlice.ts';
 import { selectDeletingAlbum } from '../albumsSlice.ts';
 import { LoadingButton } from '@mui/lab';
-import { deleteAlbum } from '../albumsThunks.ts';
+import { deleteAlbum, publishAlbum } from '../albumsThunks.ts';
+
 interface Props {
   id: string;
+  artist: string;
   name: string;
   date: number;
   image: string | null;
-  artist: string;
 }
 
 const ImageCardMedia = styled(CardMedia)({
   height: 0,
   paddingTop: '56.25%', // 16:9
 });
-const AlbumItem: React.FC<Props> = ({id,name, date, image, artist}) => {
+const AlbumItem: React.FC<Props> = ({id,artist,name,date, image}) => {
   let cardImage = imageNotAvailable;
 
   if (image) {
@@ -38,6 +39,11 @@ const AlbumItem: React.FC<Props> = ({id,name, date, image, artist}) => {
     await dispatch(deleteAlbum(id));
     navigate('/');
   };
+
+  const makePublishedAlbum = async () => {
+    await dispatch(publishAlbum(id));
+  };
+
 
   return (
     <Grid item sm md={6} lg={4}>
@@ -59,14 +65,26 @@ const AlbumItem: React.FC<Props> = ({id,name, date, image, artist}) => {
             </Grid>
             <Grid item>
               {user?.role === 'admin' && (
-                <LoadingButton
-                  color="primary"
-                  onClick={removeAlbum}
-                  loading={isDeleting}
-                  disabled={isDeleting}
-                >
-                  Delete
-                </LoadingButton>
+                <Grid container justifyContent="space-between">
+                  <Grid item>
+                    <LoadingButton
+                      color="primary"
+                      onClick={removeAlbum}
+                      loading={isDeleting}
+                      disabled={isDeleting}
+                    >
+                      Delete
+                    </LoadingButton>
+                  </Grid>
+                  <Grid item>
+                    <Button
+                      color="primary"
+                      onClick={makePublishedAlbum}
+                    >
+                      Publish
+                    </Button>
+                  </Grid>
+                </Grid>
               )}
             </Grid>
           </Grid>

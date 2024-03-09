@@ -24,3 +24,11 @@ export const deleteTrack = createAsyncThunk<void,string>(
     return await axiosApi.delete('/tracks/' + trackId);
   }
 );
+
+export const publishTrack = createAsyncThunk<void, string>(
+  'tracks/publish',
+  async(trackId) => {
+
+    return await axiosApi.patch(  `/tracks/${trackId}/togglePublished`);
+  }
+);
