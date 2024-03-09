@@ -28,6 +28,7 @@ tracksRouter.get('/', async(req,res, next) => {
 tracksRouter.post(
     '/',
     auth,
+    permit('admin', 'user'),
     async(req: RequestWithUser, res, next) => {
    try {
        const trackData = {

@@ -48,6 +48,7 @@ albumsRouter.get('/:id', async(req,res, next) => {
 albumsRouter.post(
     '/',
     auth,
+    permit('user', 'admin'),
     imagesUpload.single('image'),
     async(req: RequestWithUser,res, next) => {
    try {
@@ -90,18 +91,6 @@ albumsRouter.delete(
             next(e);
         }
     });
-
-albumsRouter.patch(
-    '/:id/togglePublished',
-    auth,
-    permit('admin'),
-    async (req,res,next) => {
-        try{
-
-        } catch (e) {
-            next(e);
-        }
-});
 
 albumsRouter.patch(
     '/:id/togglePublished',
