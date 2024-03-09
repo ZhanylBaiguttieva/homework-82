@@ -3,7 +3,12 @@ import imageNotAvailable from '../../../assets/images/image_not_available.png';
 import { Card, CardActions, CardContent, CardHeader, CardMedia, Grid, IconButton, styled } from '@mui/material';
 import { apiURL } from '../../../constants.ts';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../../../app/hooks.ts';
+import { selectUser } from '../../users/usersSlice.ts';
+import { selectDeletingAlbum } from '../albumsSlice.ts';
+import { LoadingButton } from '@mui/lab';
+import { deleteAlbum } from '../albumsThunks.ts';
 interface Props {
   id: string;
   name: string;
@@ -22,6 +27,18 @@ const AlbumItem: React.FC<Props> = ({id,name, date, image, artist}) => {
   if (image) {
     cardImage = apiURL + '/' + image;
   }
+
+  const user = useAppSelector(selectUser);
+  const isDeleting = useAppSelector(selectDeletingAlbum);
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
+
+  const removeAlbum = async() => {
+    await dispatch(deleteAlbum(id));
+    navigate('/');
+  };
+
   return (
     <Grid item sm md={6} lg={4}>
       <Card sx={{height: '100%'}}>
@@ -34,9 +51,25 @@ const AlbumItem: React.FC<Props> = ({id,name, date, image, artist}) => {
           <strong>Published year:</strong> {date}
         </CardContent>
         <CardActions>
-          <IconButton component={RouterLink} to={'/tracks/' + id}>
-            <ArrowForwardIcon/>
-          </IconButton>
+          <Grid container justifyContent="space-between">
+            <Grid item>
+              <IconButton component={RouterLink} to={'/tracks/' + id}>
+                <ArrowForwardIcon/>
+              </IconButton>
+            </Grid>
+            <Grid item>
+              {user?.role === 'admin' && (
+                <LoadingButton
+                  color="primary"
+                  onClick={removeAlbum}
+                  loading={isDeleting}
+                  disabled={isDeleting}
+                >
+                  Delete
+                </LoadingButton>
+              )}
+            </Grid>
+          </Grid>
         </CardActions>
       </Card>
     </Grid>

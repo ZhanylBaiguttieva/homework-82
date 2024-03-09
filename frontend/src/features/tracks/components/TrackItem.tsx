@@ -2,7 +2,12 @@ import React from 'react';
 import { Box, Card, CardContent, Grid, IconButton, Typography } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { addTrackToHistory } from '../../trackHistories/TracksListenedThunk.ts';
-import { useAppDispatch } from '../../../app/hooks.ts';
+import { useAppDispatch, useAppSelector } from '../../../app/hooks.ts';
+import { selectUser } from '../../users/usersSlice.ts';
+import { useNavigate } from 'react-router-dom';
+import { selectDeletingTrack } from '../tracksSlice.ts';
+import { deleteTrack } from '../tracksThunks.ts';
+import { LoadingButton } from '@mui/lab';
 
 
 interface Props {
@@ -15,8 +20,16 @@ interface Props {
 const TrackItem:React.FC<Props> = ({ _id,name, number, length,}) => {
 
   const dispatch = useAppDispatch();
+  const user = useAppSelector(selectUser);
+  const isDeleting = useAppSelector(selectDeletingTrack);
+  const navigate = useNavigate();
   const addTrack = async() => {
     await dispatch(addTrackToHistory(_id));
+  };
+
+  const removeTrack = async() => {
+    await dispatch(deleteTrack(_id));
+    navigate('/');
   };
 
   return (
@@ -38,6 +51,16 @@ const TrackItem:React.FC<Props> = ({ _id,name, number, length,}) => {
             <IconButton onClick={addTrack} aria-label="play/pause">
               <PlayArrowIcon sx={{ height: 38, width: 38 }} />
             </IconButton>
+            {user?.role === 'admin' && (
+              <LoadingButton
+                color="primary"
+                onClick={removeTrack}
+                loading={isDeleting}
+                disabled={isDeleting}
+              >
+                Delete
+              </LoadingButton>
+            )}
           </Box>
         </Box>
       </Card>
