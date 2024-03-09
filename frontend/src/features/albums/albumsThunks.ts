@@ -46,3 +46,10 @@ export const createAlbum = createAsyncThunk<void, AlbumMutation>(
     return await axiosApi.post('/albums', formData);
   }
 );
+
+export const deleteAlbum = createAsyncThunk<void,string>(
+  'albums/delete',
+  async(albumId) => {
+      return await axiosApi.delete('/albums/' + albumId);
+  }
+);
