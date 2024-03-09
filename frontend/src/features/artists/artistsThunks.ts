@@ -1,7 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axiosApi from '../../axiosApi.ts';
 import { Artist, ArtistMutation } from '../../types';
-import { RootState } from '../../app/store.ts';
 
 export const fetchArtists = createAsyncThunk(
   'artists/fetchAll',
@@ -22,10 +21,9 @@ export const fetchOneArtist = createAsyncThunk<Artist| null, string>(
   }
 );
 
-export const createArtist = createAsyncThunk<void, ArtistMutation,{state: RootState}>(
+export const createArtist = createAsyncThunk<void, ArtistMutation>(
   'artists/create',
-  async(artistMutation, {getState}) => {
-    const token = getState().users.user?.token;
+  async(artistMutation) => {
 
     const formData = new FormData();
 
@@ -37,6 +35,6 @@ export const createArtist = createAsyncThunk<void, ArtistMutation,{state: RootSt
         formData.append(key, value);
       }
     });
-    return await axiosApi.post('/artists', formData, {headers: {'Authorization': 'Bearer ' + token}});
+    return await axiosApi.post('/artists', formData);
   }
 );
