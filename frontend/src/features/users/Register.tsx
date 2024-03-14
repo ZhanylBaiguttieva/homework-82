@@ -6,7 +6,9 @@ import { Avatar, Box, Button, Grid, Link, TextField, Typography } from '@mui/mat
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useAppDispatch, useAppSelector } from '../../app/hooks.ts';
 import { selectRegisterError } from './usersSlice.ts';
-import { register } from './usersThunk.ts';
+import { googleLogin, register } from './usersThunk.ts';
+import FileInput from '../../UI/FileInput.tsx';
+import { GoogleLogin } from '@react-oauth/google';
 
 const Register = () => {
   const dispatch = useAppDispatch();
@@ -15,7 +17,9 @@ const Register = () => {
 
   const [state, setState] = useState<RegisterMutation>({
     email: '',
-    password: ''
+    password: '',
+    displayName: '',
+    avatar: null,
   });
   const getFieldError  = (fieldName: string) => {
     try {
@@ -38,9 +42,25 @@ const Register = () => {
       await dispatch(register(state)).unwrap();
       navigate('/');
     } catch(e) {
-
+        console.log('Error');
     }
   };
+
+  const fileInputChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const {name, files} = e.target;
+    if (files) {
+      setState(prevState => ({
+        ...prevState, [name]: files[0]
+      }));
+    }
+  };
+
+  const googleLoginHandler =  async(credential: string) => {
+    await dispatch(googleLogin(credential)).unwrap();
+    navigate('/');
+  };
+
+
   return (
     <Container component="main" maxWidth="xs">
       <Box
@@ -57,11 +77,24 @@ const Register = () => {
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
+        <Box sx={{ pt: 2 }}>
+          <GoogleLogin
+            onSuccess={(credentialResponse) => {
+              if(credentialResponse.credential) {
+                void googleLoginHandler(credentialResponse.credential);
+              }
+            }}
+            onError={() => {
+              console.log('Login failed!');
+            }}
+          />
+        </Box>
         <Box component="form" onSubmit={submitFormHandler} sx={{mt: 3}}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextField
                 required
+                fullWidth
                 label="Email"
                 name="email"
                 autoComplete="new-email"
@@ -74,6 +107,7 @@ const Register = () => {
             <Grid item xs={12}>
               <TextField
                 required
+                fullWidth
                 name="password"
                 label="Password"
                 type="password"
@@ -82,6 +116,27 @@ const Register = () => {
                 onChange={inputChangeHandler}
                 error={Boolean(getFieldError('password'))}
                 helperText={getFieldError('password')}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                name="displayName"
+                label="Name"
+                type="displayName"
+                autoComplete="new-displayName"
+                value={state.displayName}
+                onChange={inputChangeHandler}
+                error={Boolean(getFieldError('displayName'))}
+                helperText={getFieldError('displayName')}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <FileInput
+                label="Avatar"
+                name="avatar"
+                onChange={fileInputChangeHandler}
               />
             </Grid>
           </Grid>

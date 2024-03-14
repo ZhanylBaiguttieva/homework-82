@@ -5,7 +5,7 @@ import LockOpenIcon from '@mui/icons-material/LockOpen';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks.ts';
 import { selectLoginError } from './usersSlice.ts';
-import { login } from './usersThunk.ts';
+import { googleLogin, login } from './usersThunk.ts';
 import { GoogleLogin } from '@react-oauth/google';
 
 const Login = () => {
@@ -28,6 +28,11 @@ const Login = () => {
   const submitFormHandler = async (event: React.FormEvent) => {
     event.preventDefault();
     await dispatch(login(state)).unwrap();
+    navigate('/');
+  };
+
+  const googleLoginHandler =  async(credential: string) => {
+    await dispatch(googleLogin(credential)).unwrap();
     navigate('/');
   };
 
@@ -55,10 +60,12 @@ const Login = () => {
         <Box sx={{ pt: 2 }}>
           <GoogleLogin
             onSuccess={(credentialResponse) => {
-              console.log(credentialResponse);
+              if(credentialResponse.credential) {
+                void googleLoginHandler(credentialResponse.credential);
+              }
             }}
             onError={() => {
-              console.log('Login Failed');
+                console.log('Login failed!');
             }}
           />
         </Box>
@@ -67,6 +74,7 @@ const Login = () => {
             <Grid item xs={12}>
               <TextField
                 required
+                fullWidth
                 label="Email"
                 name="email"
                 autoComplete="current-email"
@@ -77,6 +85,7 @@ const Login = () => {
             <Grid item xs={12}>
               <TextField
                 required
+                fullWidth
                 name="password"
                 label="Password"
                 type="password"

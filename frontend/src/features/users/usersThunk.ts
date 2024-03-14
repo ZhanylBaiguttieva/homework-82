@@ -1,5 +1,11 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { GlobalError, LoginMutation, RegisterMutation, RegisterResponse, ValidationError } from '../../types';
+import {
+  GlobalError,
+  LoginMutation,
+  RegisterMutation,
+  RegisterResponse,
+  ValidationError
+} from '../../types';
 import axiosApi from '../../axiosApi.ts';
 import { isAxiosError } from 'axios';
 import { RootState } from '../../app/store.ts';
@@ -8,8 +14,19 @@ import { unSetUser } from './usersSlice.ts';
 export  const register = createAsyncThunk<RegisterResponse,RegisterMutation,{rejectValue: ValidationError}>(
   'users/register',
   async (registerMutation, {rejectWithValue}) => {
+    const formData = new FormData();
+
+    const keys = Object.keys(registerMutation) as (keyof RegisterMutation)[];
+    keys.forEach(key => {
+      const value = registerMutation[key];
+
+      if (value !== null) {
+        formData.append(key, value);
+      }
+    });
+
     try {
-      const response = await axiosApi.post('/users', registerMutation);
+      const response = await axiosApi.post('/users', formData);
       return response.data;
     } catch (e) {
       if (isAxiosError(e) && e.response && e.response.status === 422) {
@@ -39,7 +56,7 @@ export const googleLogin = createAsyncThunk<RegisterResponse,string,{rejectValue
   'users/googleLogin',
   async (credential, {rejectWithValue}) => {
     try {
-      const response = await axiosApi.post('/users/google',{credential})
+      const response = await axiosApi.post('/users/google',{credential});
       return response.data;
     } catch (e) {
       if(isAxiosError(e) && e.response && e.response.status === 422) {

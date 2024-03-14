@@ -44,11 +44,15 @@ export interface User {
   email: string;
   token: string;
   role: string;
+  displayName: string;
+  avatar: string |  null;
 }
 
 export interface RegisterMutation {
   email: string;
   password: string;
+  displayName: string;
+  avatar: File | null;
 }
 
 export interface LoginMutation {
