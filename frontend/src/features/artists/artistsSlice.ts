@@ -66,6 +66,7 @@ export const artistsSlice = createSlice({
     builder.addCase(deleteArtist.rejected, (state) => {
       state.deleteLoading = false;
     });
+
   }
 });
 

@@ -9,6 +9,7 @@ import { selectUser } from '../../users/usersSlice.ts';
 import { selectDeletingArtist } from '../artistsSlice.ts';
 import { deleteArtist, fetchArtists, publishArtist } from '../artistsThunks.ts';
 import { LoadingButton } from '@mui/lab';
+import { Artist } from '../../../types';
 
 const ImageCardMedia = styled(CardMedia)({
   height: 0,
@@ -16,12 +17,10 @@ const ImageCardMedia = styled(CardMedia)({
 });
 
 interface Props {
-  id: string;
-  name: string;
-  image: string | null;
+  artist: Artist;
 }
 
-const ArtistItem: React.FC<Props> = ({id, name, image}) => {
+const ArtistItem: React.FC<Props> = ({artist}) => {
   const user = useAppSelector(selectUser);
   const isDeleting = useAppSelector(selectDeletingArtist);
   const navigate = useNavigate();
@@ -29,56 +28,55 @@ const ArtistItem: React.FC<Props> = ({id, name, image}) => {
 
   let cardImage = imageNotAvailable;
 
-  if (image) {
-    cardImage = apiURL + '/' + image;
+  if (artist.image) {
+    cardImage = apiURL + '/' + artist.image;
   }
 
   const removeArtist = async() => {
-    await dispatch(deleteArtist(id));
+    await dispatch(deleteArtist(artist._id));
     await dispatch(fetchArtists());
     navigate('/');
   };
 
   const makePublishedArtist = async () => {
-    await dispatch(publishArtist(id));
+    await dispatch(publishArtist(artist._id));
     await dispatch(fetchArtists());
   };
 
   return (
     <Grid item sm md={6} lg={4}>
       <Card sx={{height: '100%'}}>
-        <CardHeader title={name}/>
+        <CardHeader title={artist.name}/>
         <ImageCardMedia image={cardImage} />
         <CardActions>
           <Grid container justifyContent="space-between">
             <Grid item>
-              <IconButton component={RouterLink} to={'/albums/' + id}>
+              <IconButton component={RouterLink} to={'/albums/' + artist._id}>
                 <ArrowForwardIcon/> more...
               </IconButton>
             </Grid>
             {user?.role === 'admin' && (
-              <Grid container justifyContent="space-between">
-                <Grid item>
-                  <LoadingButton
-                    color="primary"
-                    onClick={removeArtist}
-                    loading={isDeleting}
-                    disabled={isDeleting}
-                  >
-                    Delete
-                  </LoadingButton>
-                </Grid>
-                <Grid item>
-                  <Button
-                    color="primary"
-                    onClick={makePublishedArtist}
-                  >
-                    Publish
-                  </Button>
-                </Grid>
+              <Grid item>
+                <LoadingButton
+                  color="primary"
+                  onClick={removeArtist}
+                  loading={isDeleting}
+                  disabled={isDeleting}
+                >
+                  Delete
+                </LoadingButton>
               </Grid>
             )}
-
+            {user?.role === 'admin' && artist.isPublished === false && (
+              <Grid item>
+                <Button
+                  color="primary"
+                  onClick={makePublishedArtist}
+                >
+                  Publish
+                </Button>
+              </Grid>
+            )}
           </Grid>
         </CardActions>
       </Card>

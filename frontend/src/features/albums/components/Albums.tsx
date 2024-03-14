@@ -34,11 +34,7 @@ const Albums = () => {
         {albums.map(album => (
           <AlbumItem
             key={album._id}
-            id={album._id}
-            name={album.name}
-            date={album.date}
-            image={album.image}
-            artist={album.artist.name}
+            album={album}
           />
         ))}
       </Grid>

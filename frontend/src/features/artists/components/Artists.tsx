@@ -24,9 +24,7 @@ const Artists = () => {
         {artists.map(artist => (
           <ArtistItem
             key={artist._id}
-            id={artist._id}
-            name={artist.name}
-            image = {artist.image}
+            artist={artist}
           />
         ))}
       </Grid>

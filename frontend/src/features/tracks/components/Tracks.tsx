@@ -25,10 +25,7 @@ const Tracks = () => {
     tracksArea = tracks.map(track => (
         <TrackItem
           key={track._id}
-          _id={track._id}
-          name={track.name}
-          length={track.length}
-          number={track.number}
+          track={track}
         />
     ));
   }

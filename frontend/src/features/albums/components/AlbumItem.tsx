@@ -8,25 +8,22 @@ import { useAppDispatch, useAppSelector } from '../../../app/hooks.ts';
 import { selectUser } from '../../users/usersSlice.ts';
 import { selectDeletingAlbum } from '../albumsSlice.ts';
 import { LoadingButton } from '@mui/lab';
-import { deleteAlbum, publishAlbum } from '../albumsThunks.ts';
+import { deleteAlbum, fetchAlbums, publishAlbum } from '../albumsThunks.ts';
+import { Album } from '../../../types';
 
 interface Props {
-  id: string;
-  artist: string;
-  name: string;
-  date: number;
-  image: string | null;
+  album: Album;
 }
 
 const ImageCardMedia = styled(CardMedia)({
   height: 0,
   paddingTop: '56.25%', // 16:9
 });
-const AlbumItem: React.FC<Props> = ({id,artist,name,date, image}) => {
+const AlbumItem: React.FC<Props> = ({album}) => {
   let cardImage = imageNotAvailable;
 
-  if (image) {
-    cardImage = apiURL + '/' + image;
+  if (album.image) {
+    cardImage = apiURL + '/' + album.image;
   }
 
   const user = useAppSelector(selectUser);
@@ -36,54 +33,55 @@ const AlbumItem: React.FC<Props> = ({id,artist,name,date, image}) => {
 
 
   const removeAlbum = async() => {
-    await dispatch(deleteAlbum(id));
+    await dispatch(deleteAlbum(album._id));
     navigate('/');
   };
 
   const makePublishedAlbum = async () => {
-    await dispatch(publishAlbum(id));
+    await dispatch(publishAlbum(album._id));
+    await dispatch(fetchAlbums(album.artist._id));
   };
 
 
   return (
     <Grid item sm md={6} lg={4}>
       <Card sx={{height: '100%'}}>
-        <CardHeader title={name}/>
+        <CardHeader title={album.name}/>
         <ImageCardMedia image={cardImage}/>
         <CardContent>
           <p>
-            <strong>Artist:</strong> {artist}
+            <strong>Artist:</strong> {album.artist.name}
           </p>
-          <strong>Published year:</strong> {date}
+          <strong>Published year:</strong> {album.date}
         </CardContent>
         <CardActions>
           <Grid container justifyContent="space-between">
             <Grid item>
-              <IconButton component={RouterLink} to={'/tracks/' + id}>
+              <IconButton component={RouterLink} to={'/tracks/' + album._id}>
                 <ArrowForwardIcon/>
               </IconButton>
             </Grid>
             <Grid item>
               {user?.role === 'admin' && (
-                <Grid container justifyContent="space-between">
-                  <Grid item>
-                    <LoadingButton
-                      color="primary"
-                      onClick={removeAlbum}
-                      loading={isDeleting}
-                      disabled={isDeleting}
-                    >
-                      Delete
-                    </LoadingButton>
-                  </Grid>
-                  <Grid item>
-                    <Button
-                      color="primary"
-                      onClick={makePublishedAlbum}
-                    >
-                      Publish
-                    </Button>
-                  </Grid>
+                <Grid item>
+                  <LoadingButton
+                    color="primary"
+                    onClick={removeAlbum}
+                    loading={isDeleting}
+                    disabled={isDeleting}
+                  >
+                    Delete
+                  </LoadingButton>
+                </Grid>
+              )}
+              {user?.role === 'admin' && album.isPublished === false && (
+                <Grid item>
+                  <Button
+                    color="primary"
+                    onClick={makePublishedAlbum}
+                  >
+                    Publish
+                  </Button>
                 </Grid>
               )}
             </Grid>
