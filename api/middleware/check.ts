@@ -4,33 +4,33 @@ import { UserFields } from '../types';
 import User from '../models/User';
 
 export interface RequestWithUser extends Request {
-    user?: HydratedDocument<UserFields>;
+  user?: HydratedDocument<UserFields>;
 }
 
 const check = async (
-    req: RequestWithUser,
-    _res: Response,
-    next: NextFunction,
+  req: RequestWithUser,
+  _res: Response,
+  next: NextFunction,
 ) => {
-    const headerValue = req.get('Authorization');
+  const headerValue = req.get('Authorization');
 
-    if (!headerValue) {
-        return next();
-    }
+  if (!headerValue) {
+    return next();
+  }
 
-    const [_bearer, token] = headerValue.split(' ');
+  const [_bearer, token] = headerValue.split(' ');
 
-    if (!token) {
-        return next();
-    }
+  if (!token) {
+    return next();
+  }
 
-    const user = await User.findOne({ token });
+  const user = await User.findOne({ token });
 
-    if (!user) {
-        return next();
-    }
-    req.user = user;
-    next();
+  if (!user) {
+    return next();
+  }
+  req.user = user;
+  next();
 };
 
 export default check;
