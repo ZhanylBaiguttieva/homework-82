@@ -9,7 +9,7 @@ const client = new OAuth2Client(config.google.clientId);
 usersRouter.post('/', async(req,res, next) => {
    try {
        const userData = {
-           username: req.body.username,
+           email: req.body.email,
            password: req.body.password,
        }
        const user = new User(userData);
@@ -26,9 +26,9 @@ usersRouter.post('/', async(req,res, next) => {
 
 usersRouter.post('/sessions', async (req,res, next) => {
     try {
-        const user = await User.findOne({username: req.body.username});
+        const user = await User.findOne({email: req.body.email});
         if(!user) {
-            return res.status(422).send({error: 'Username not found'});
+            return res.status(422).send({error: 'Email not found'});
         }
 
         const isMatch = await user.checkPassword(req.body.password);
@@ -38,7 +38,7 @@ usersRouter.post('/sessions', async (req,res, next) => {
         user.generateToken();
         await user.save();
 
-        return res.send({ message: 'Username and password are correct!', user });
+        return res.send({ message: 'Email and password are correct!', user });
     } catch (e) {
         next(e);
     }

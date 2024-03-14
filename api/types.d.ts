@@ -24,12 +24,12 @@ export interface Track {
 }
 
 export interface UserFields {
-    username: string;
+    email: string;
     password: string;
     token: string;
     role: string;
     displayName: string;
-    googleId: string;
+    googleId?: string;
     avatar: string | null;
 }
 

@@ -6,6 +6,7 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks.ts';
 import { selectLoginError } from './usersSlice.ts';
 import { login } from './usersThunk.ts';
+import { GoogleLogin } from '@react-oauth/google';
 
 const Login = () => {
   const dispatch = useAppDispatch();
@@ -13,7 +14,7 @@ const Login = () => {
   const navigate = useNavigate();
 
   const [state, setState] = useState<LoginMutation>({
-    username: '',
+    email: '',
     password: ''
   });
   const inputChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,15 +52,25 @@ const Login = () => {
             {error.error}
           </Alert>
         )}
+        <Box sx={{ pt: 2 }}>
+          <GoogleLogin
+            onSuccess={(credentialResponse) => {
+              console.log(credentialResponse);
+            }}
+            onError={() => {
+              console.log('Login Failed');
+            }}
+          />
+        </Box>
         <Box component="form" onSubmit={submitFormHandler} sx={{mt: 3}}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextField
                 required
-                label="Username"
-                name="username"
-                autoComplete="current-username"
-                value={state.username}
+                label="Email"
+                name="email"
+                autoComplete="current-email"
+                value={state.email}
                 onChange={inputChangeHandler}
               />
             </Grid>

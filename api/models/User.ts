@@ -6,19 +6,19 @@ import {UserFields, UserMethods, UserModel} from "../types";
 const SALT_WORK_FACTOR = 10;
 
 const UserSchema = new mongoose.Schema<UserFields, UserModel, UserMethods>({
-    username: {
+    email: {
         type: String,
         required: true,
         unique: true,
         validate: {
             validator: async function (
                 this: HydratedDocument<UserFields>,
-                username: string,
+                email: string,
             ): Promise<boolean> {
-                if (!this.isModified('username')) return true;
+                if (!this.isModified('email')) return true;
 
                 const user: HydratedDocument<UserFields> | null = await User.findOne({
-                    username: username,
+                    email,
                 });
 
                 return !user;

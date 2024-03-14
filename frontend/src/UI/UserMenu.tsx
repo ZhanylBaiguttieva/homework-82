@@ -36,7 +36,7 @@ const UserMenu: React.FC<Props> = ({user}) => {
         <Link to="/track_history">Track History</Link>
       </Typography>
       <Button color="inherit" onClick={handleClick}>
-        Hello, {user.username}
+        Hello, {user.email}
       </Button>
       <Menu open={Boolean(anchorEl)} anchorEl={anchorEl} onClose={handleClose} keepMounted>
         <MenuItem>Profile</MenuItem>
