@@ -3,14 +3,20 @@ import User from "../models/User";
 import mongoose from "mongoose";
 import {OAuth2Client} from "google-auth-library";
 import config from "../config";
+import {imagesUpload} from "../multer";
 
 const usersRouter = Router();
 const client = new OAuth2Client(config.google.clientId);
-usersRouter.post('/', async(req,res, next) => {
+usersRouter.post(
+    '/',
+    imagesUpload.single('avatar'),
+    async(req,res, next) => {
    try {
        const userData = {
            email: req.body.email,
            password: req.body.password,
+           displayName: req.body.displayName,
+           avatar: req.file ? req.file.filename : null,
        }
        const user = new User(userData);
        user.generateToken();
@@ -24,7 +30,7 @@ usersRouter.post('/', async(req,res, next) => {
    }
 });
 
-usersRouter.post('/sessions', async (req,res, next) => {
+usersRouter.post('/sessions',async (req,res, next) => {
     try {
         const user = await User.findOne({email: req.body.email});
         if(!user) {
