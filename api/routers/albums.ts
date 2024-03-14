@@ -127,7 +127,7 @@ albumsRouter.patch(
         name: req.body.name,
         artist: req.body.artist,
         date: parseFloat(req.body.date),
-        image: req.file ? req.file.filename : null,
+        image: album.image,
         isPublished: !req.body.isPublished,
       });
 

@@ -112,7 +112,7 @@ artistsRouter.patch(
       const newArtist = new Artist({
         _id: _id,
         name: req.body.name,
-        image: req.file ? req.file.filename : null,
+        image: artist.image,
         information: req.body.information,
         isPublished: !req.body.isPublished,
       });
